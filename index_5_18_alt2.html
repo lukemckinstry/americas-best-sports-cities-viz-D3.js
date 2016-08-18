@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body { font: 10px Arial;
+       cursor: default;}
+
+path {
+    stroke: steelblue;
+    stroke-width: 1;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: .1;
+    shape-rendering: crispEdges;
+}
+.legend {
+    font-size: 12px;
+    font-weight: bold;
+    text-anchor: middle;
+    cursor: pointer;
+}
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+}
+.grid path {
+      stroke-width: 0;
+}
+div.tooltip {
+    position: absolute;
+    text-align: left;
+    width: 140px;
+    height: 240px;
+    padding: 2px;
+    font: 12px Arial;
+    background: lightsteelblue;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+</style>
+<body>
+<svg width="720" height="40">
+<text x="0" y="35"font-family="Arial" font-size="40px">America's Best Sports Towns</text>
+</svg>
+
+  <svg width="1120" height="90" >
+  <circle cx="40" cy="15" r="2" ></circle>
+  <text x="80" y="20" font-family="Arial" font-size="10px">0 Teams appeared in Conference or League Final</text>
+  <circle cx="40" cy="30" r="3.41421356237" ></circle>
+  <text x="80" y="35" font-family="Arial" font-size="10px">1 Team appeared in Conference or League Final</text>
+  <circle cx="40" cy="45" r="4.82842712475" ></circle>
+   <text x="80" y="50" font-family="Arial" font-size="10px">2 Teams appeared in Conference or League Final</text>
+  <circle cx="40" cy="60" r="6.24264068712" ></circle>
+   <text x="80" y="65" font-family="Arial" font-size="10px">3 Teams appeared in Conference or League Final</text>
+  <circle cx="40" cy="75" r="7.65685424949" ></circle>
+   <text x="80" y="80" font-family="Arial" font-size="10px">4 Teams appeared in Conference or League Final</text>
+
+   <circle cx="350" cy="15" r="4.82842712475" style="fill:black;"></circle>
+  <text x="390" y="20" font-family="Arial" font-size="10px">0 Championships</text>
+  <circle cx="350" cy="30" r="4.82842712475" style="fill:orange;"></circle>
+  <text x="390" y="35" font-family="Arial" font-size="10px">1 Championships</text>
+  <circle cx="350" cy="45" r="4.82842712475" style="fill:red;"></circle>
+   <text x="390" y="50" font-family="Arial" font-size="10px">2 Championships</text>
+
+
+</svg>
+<svg width="720" height="50">
+<text x="80" y="15"font-family="Arial" font-size="14px">City Winning Percentage is the win pct for each team divided by number of teams </text>
+<text x="80" y="45"font-family="Arial" font-size="24px">Click a City to View from the Key </text>
+</svg>
+
+
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+
+<script>
+// Set the dimensions of the canvas / graph
+var margin = {top: 10, right: 80, bottom: 45, left: 80},
+    width = 1200 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// Parse the date / time
+var parseDate = d3.time.format("%Y").parse;
+
+var color = d3.scale.category10();
+
+// Set the ranges
+var x = d3.scale.linear().range([0, width]);
+var y = d3.scale.linear().range([height, 0]);
+
+
+// Define the axis
+function make_x_axis() {
+    return d3.svg.axis()
+        .scale(x)
+        .orient("bottom")
+        .ticks(10);
+}
+function make_y_axis() {
+    return d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(10);
+}
+
+var xAxis = d3.svg.axis().scale(x)
+    .tickFormat(function(d) {
+        return d})
+    .orient("bottom").ticks(50);
+var yAxis = d3.svg.axis().scale(y)
+    .tickFormat(function(d) {
+        return d + "00 win%"; })
+    .orient("right").ticks(10);
+
+// Define the line
+var PCTline = d3.svg.line()
+    .x(function(d) { return x(d.year); })
+    .y(function(d) { return y(d.pct); });
+
+//define div for the tooltip
+var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
+// Adds the svg canvas
+var svg = d3.select("body")
+    .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+        .attr("transform",
+              "translate(" + margin.left + "," + margin.top + ")");
+
+
+    //Add the grid
+    svg.append("g")
+        .attr("class", "grid")
+        .attr("transform", "translate(0," + height + ")")
+        .call(make_x_axis()
+            .tickSize(-height, 0, 0)
+            .tickFormat("")
+        )
+
+    svg.append("g")
+        .attr("class", "grid")
+        .call(make_y_axis()
+            .tickSize(-width, 0, 0)
+            .tickFormat("")
+        )
+
+
+// Get the data
+d3.csv("sportcities_nest_5_13sample.csv", function(error, data) {
+    data.forEach(function(d) {
+  d.year = +d.year;
+  d.pct = +d.pct;
+  d.city = d.city;
+  d.ff = d.ff;
+  d.champ = d.champ;
+  d.tooltip = d.tooltip;
+    });
+
+
+    // Scale the range of the data
+    x.domain(d3.extent(data, function(d) { return d.year; }));
+    y.domain([0, 1]);
+
+
+    // Nest the entries by city
+    var dataNest = d3.nest()
+        .key(function(d) {
+            return d.city;})
+        .entries(data);
+
+
+legendSpace = height/dataNest.length; // spacing for legend
+
+// Loop through each symbol / key
+     dataNest.forEach(function(d, i) {
+        svg.append("path")
+            .attr("class", "line")
+            .style("stroke", "black")
+            .attr("id", 'tag'+d.key.replace(/\s+/g, '')) // assign ID
+            .attr("d", PCTline(d.values))
+            .style('opacity', 0);
+
+        // Add the Legend
+        svg.append("text")
+            .attr("x", 0 - margin.left/2)
+            .attr("y", (legendSpace/2)+i*legendSpace)
+            .attr("class", "legend")
+            .style("fill", "black")
+            .on("click", function(){
+                // Determine if current line is visible
+                var active   = d.active ? false : true,
+                newOpacity = active ? 0 : 1;
+                // Hide or show the elements based on the ID
+                d3.select("#tag"+d.key.replace(/\s+/g, ''))
+                    .transition().duration(100)
+                    .style("opacity", newOpacity);
+                // Update whether or not the elements are active
+                d.active = active;
+                })
+            .text(d.key);
+
+    });
+
+        var radius = 2
+
+        svg.selectAll("g.circle")
+                .data(dataNest)
+               .enter()
+                .append("g")
+                .attr("class", "circle")
+            .selectAll("circle")
+            .data(function(g) {
+                return g.values; })
+                .enter()
+                .append("circle")
+            .attr("cx", function(g) {
+                return x(g.year);
+            })
+            .attr("cy", function(g) {
+                return y(g.pct);
+            })
+            .attr("r", function(d) {
+              return 2 + (d.ff * Math.sqrt(radius));
+            })
+            .attr("fill", function(d) {
+              if(d.champ == 1) {
+                return "orange"
+              }
+              if(d.champ == 2) {
+                return "red"
+              }
+              if(d.champ == 0) {
+                return "black"
+              }
+
+            })
+            .on("mouseover", function(d) {
+            div.transition()
+                .ease("elastic")
+                .duration(200)
+                .style("opacity", .9);
+            div .html((d.city) + "<br/>"  + d.year + "<br/>" + "Championships: " + d.champ
+                + "<br/>" + "Top 4 Finishes: " + d.ff + "<br/>" + "Teams: " + d.tooltip )
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+                div.transition()
+                    .ease("elastic")
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+
+    // Add the X Axis
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", function(d) {
+                return "rotate(-65)"
+                });
+
+    // Add the Y Axis
+    svg.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" + width + ",0)")
+        .call(yAxis);
+
+        var padding = 100
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (width + margin.right - 7) +","+(60)+")rotate(-90)")// text is drawn off the screen top left, move down and out and rotate
+            .text("City Winning Percentage");
+
+        svg.append("text")
+            .attr("text-anchor", "middle")
+            // this makes it easy to centre the text as the transform is applied to the anchor
+            .attr("transform", "translate("+ (width - 23) +","+(height + margin.bottom)+")")
+            // centre below axis
+            .text("Season");
+
+
+});
+
+
+</script>
+<svg width="720" height="180" >
+<text x="40" y="15" font-family="Arial" font-size="10px">Sources: </text>
+<text x="40" y="30" font-family="Arial" font-size="10px">Baseball:<a href="http://www.baseball-reference.com/" target="_blank"> http://www.baseball-reference.com/ </a></text>
+<text x="40" y="45" font-family="Arial" font-size="10px">Football:<a href="http://www.pro-football-reference.com/" target="_blank"> http://www.pro-football-reference.com/</a></text>
+<text x="40" y="60" font-family="Arial" font-size="10px">Basketball:<a href="http://www.basketball-reference.com/" target="_blank"> http://www.basketball-reference.com/</a></text>
+<text x="40" y="75" font-family="Arial" font-size="10px">Hockey:<a href="http://www.hockey-reference.com/" target="_blank"> http://www.hockey-reference.com/</a></text>
+<text x="40" y="105" font-family="Arial" font-size="10px">Notes:</text>
+<text x="40" y="120" font-family="Arial" font-size="10px">1. Major League Baseball did not begin the American League Championship Series and National League Championship </text>
+<text x="40" y="135" font-family="Arial" font-size="10px">Series until 1969 so only the loser of the World Series is credited for appearing in Conference or League Finals.</text>
+<text x="40" y="150" font-family="Arial" font-size="10px">2. Teams from the World Hockey Association (WHL), a professional league from 1972 - 1979 are not included in this infographic. </text>
+<text x="40" y="165" font-family="Arial" font-size="10px">3. Teams from the American Basketball Association (ABA), a professional league from 1967 - 1976 are not included in this infographic. </text>
+
+</svg>
+
+    </body>
