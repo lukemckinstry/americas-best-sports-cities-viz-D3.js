@@ -5,7 +5,7 @@ See live viz: http://hello-luke-987.appspot.com/sportcities
 
 Summary -
 
-Here we map the success of sports teams in several of the largest markets for professional sports in the United States from 1960 - 2015. We show results from the 4 major men's professional sports leagues: Major League Baseball, National Basketball Association, National Hockey League and the National Football League. For each year we show three criteria: Win percentage of the teams in a city, teams advancing to the conference or league finals in a season (top 4 finish), and championships won in a season.
+Here we map the success of sports teams in several of the largest markets for professional sports in the United States from 1960 - 2015. We show results from the 4 major men's professional sports leagues: Major League Baseball, National Basketball Association, National Hockey League and the National Football League. For each year we show three criteria: Win percentage of the teams in a city, teams advancing to the conference or league finals in a season (top 4 finish), and championships won in a season. I created the data set using web scraping with Python.
 
 Trends -
 
@@ -32,7 +32,7 @@ On several less happy occasions cities went from best to worst over consecutive 
  This visualization shows that success is often highly variable year to year. In general, strong sports cities like Boston, Philadelphia and Pittsburgh finish ahead of weak sports cities like Cleveland, Atlanta and Washington. Some cities enjoy sustained runs of success (Boston 2001 - 2015, Philadlephia 1974 - 1985 and 2001-2004, Pittsburgh 1972 - 1979) and others sustained runs of failure (Cleveland 1977-1985 and 1999 - 2015, Washington 1993 - 2004, Philadelphia 1968-1972). In conclusion, I hope this graphic helps readers visualize success of sports cities as the combination of sustained winning accross multiple teams through the years and frequently advancing to conference finals and winning championships.
 
 
-Design - explain any design choices you made including changes to the visualization after collecting feedback
+Design -
 
 I used a time series on the x axis to show the history of sports results each year. On the y axis I charted winning percentage for each season. The points in the scater plot represent the mean win percentage of teams in the same city, since sports fans often decide to support the teams representing the place where they live and the focus of this project is sports towns. To calculate the mean win percentage, I took the sum of win percentage for each team and divided by the number of teams. Had I calculated mean using total wins and total losses for teams in a city, more emphasis would be placed on success in baseball which plays 162 games per season (since 1962), over basketball (82 games since 1968) hockey (82 games since 1996, 70 games in 1960 with multiple incremental increases) and football (16 since 1972, 14 games since 1961). I used size of the circles to show how many teams from the city advanced to the conference/league finals. Each league has increased the number of teams that can qualify for the playoffs, so it would not be fair to say qualifying for the playoffs now and in the past are equal accomplishments. I decided a top 4 finish was a universal mark of success in each sport for all the years in the infographic. The only exception is Major League Baseball, where only the winner of the American League and National League advanced to the World Series until 1969. Finall, to show championships, I colored the circle orange to show 1 championship, and red to show 2 championships. Black shows no championships won and no city has had 3 teams win championships in a season. I created a key at the top of the visualization to explain the size and color elements of the circles.
 
@@ -41,9 +41,9 @@ To make the scatter plot easier to follow, I added line series for each city tha
 I used tool tips to show specific information about each team's record (win percentage, top 4, championships) for each season. This allows the reader to see the specific team information that builds the overall narrative.
 
 
-Feedback -
+Reviewer Feedback on Previous Draft and Edits -
 
-Feedback on second sketch: (file: index_final_p6.html)
+
 1. It would be helpful if you could hover your mouse above the city names in the key and the line corresponding to that city lit up on the line graph. As it exists right now, I had to move my mouse around on the graph to search for the Philadelphia line. The color key on the right side isn't helpful because there are so many lines and so many similar-looking colors.
 
 2. I like how you hover the mouse and the red line and the team name shows up.
@@ -51,7 +51,7 @@ A few suggestions: Could the infographic be a bit bigger?  I have trouble follow
 
 3. I don't like how the cursor turns into an editing "I" icon when you hover over the city names. It creates confusion. It would be better if it turned into the little pointing icon most people associate with a click-able item. But even just keeping it as is would be better. That little "I" bar really makes it seem like the cities aren't meant to be clicked--even though the instructions say otherwise. At first I didn't realize you could click on the city names because I didn't read the prompt. Without that feature the chart would have been utterly confusing.
 
-Changes Based on Feedback -
+Edits Based on Feedback -
 
 After feedback from these two reviewers and the udacity graded I made the following changes:
 1. Added dynamic key.
@@ -64,7 +64,8 @@ After feedback from these two reviewers and the udacity graded I made the follow
 8. Made the plot larger, more attractive and easier to follow.
 
 
-Resources - list any sources you consulted to create your visualization
+Resources - 
+
 I built my own dataset by scraping data from the four sport fan website listed at the bottom of the infographic:
 Baseball: http://www.baseball-reference.com/
 Football: http://www.pro-football-reference.com/
