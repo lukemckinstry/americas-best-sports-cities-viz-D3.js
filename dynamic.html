@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<style>
+h1 {
+  font-family:arial;
+  font-size:2em;
+  color:#333;
+}
+#info {
+  position:absolute;
+  top: 10px;
+  left: 10px;
+}
+.states {
+	stroke: #fff;
+	stroke-width:2px;
+}
+.states:hover {
+	fill: steelblue;
+}
+table, th, td, body {
+  font-family: monospace;
+  font-size:1em;
+  color:#333;
+}
+th, td {
+    padding: 5px;
+}
+/* Style the tab */
+div.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+div.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+div.tab button:hover {
+    background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+div.tab button.active {
+    background-color: #ccc;
+}
+
+</style>
+<body>
+<div id="name"></div>
+<div id="table"></div>
+<div class="tab">
+  <button class="tablinks active" onclick="openCity(event, 'snap_rat')">SNAP</button>
+  <button class="tablinks" onclick="openCity(event, 'eitc_rat')">TANF</button>
+  <button class="tablinks" onclick="openCity(event, 'medchip_rat')">Medicaid/ CHIP</button>
+</div>
+<div id="viz-holder"></div>
+<div style="text-align:center;">
+<h4>Scale: Minimum Enrollment to Maximum Enrollment</h4>
+</div>
+<img src="viridis.png" width="100%">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+<script src="https://d3js.org/topojson.v2.min.js"></script>
+<script>
+
+draw('snap_rat')
+
+function openCity(evt, program) {
+    // Declare all variables
+    var i, tablinks;
+
+    // Get all elements with class="tablinks" and remove the class "active"
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    // Add an "active" class to the button that opened the tab
+    evt.currentTarget.className += " active";
+    draw(program);
+    return;
+}
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function showStats(state, e_elig, e_nr, e_rat, s_elig, s_nr, s_rat, mc_elig, mc_nr, mc_rat) {
+  document.getElementById('table').innerHTML= "\
+      <table><tr><td><h2>" + state.replace(/([A-Z])/g, ' $1') +"</h2> </td> </tr>\
+        <tr><td><div>\
+              <div>SNAP Eligibles</div>\
+              <div>SNAP Eligibles Not Receiving</div>\
+              <div>SNAP Percent Not Receiving</div>\
+        </div></td>\
+        <td><div>\
+            <div>"+ numberWithCommas(s_elig) +"</div>\
+              <div>"+numberWithCommas(s_nr)+"</div>\
+              <div>"+s_rat+"%</div>\
+            </div></td></tr>\
+        <tr><td><div>\
+              <div>EITC Eligibles</div>\
+              <div>EITC Eligibles Not Receiving</div>\
+              <div>EITC Percent Not Receiving</div>\
+        </div></td>\
+          <td><div>\
+              <div>"+numberWithCommas(e_elig)+"</div>\
+              <div>"+numberWithCommas(e_nr)+"</div>\
+              <div>"+e_rat+"%</div>\
+        </div></td></tr>\
+        <tr><td><div>\
+              <div>Medicaid/ CHIP Eligibles</div>\
+              <div>Medicaid/ CHIP Eligibles Not Receiving</div>\
+              <div>Medicaid/ CHIP Percent Not Receiving</div>\
+        </div></td>\
+        <td><div>\
+            <div>"+ numberWithCommas(mc_elig) +"</div>\
+              <div>"+numberWithCommas(mc_nr)+"</div>\
+              <div>"+mc_rat+"%</div>\
+            </div></td></tr></table>";
+      return;
+}
+var blank = "";
+showStats("Select a State", blank, blank, blank, blank, blank, blank, blank, blank, blank);
+
+function draw(program_to_show) {
+
+  if ( document.contains(document.getElementById("viz"))) {
+                    document.getElementById("viz").remove();
+                    }
+
+  var width = 960,
+  	height = 860;
+   
+  var svg = d3.select('#viz-holder').append('svg').attr("id", "viz")
+  	.attr('width', width)
+  	.attr('height', height);
+   
+  var path = d3.geoPath()
+  	.projection(null);
+
+  var color = d3.scaleSequential(d3.interpolateViridis);
+   
+  d3.json('usa-ratio-quantizedtopo.json', function(error, us) {
+  	svg.selectAll('.states')
+  		.data(topojson.feature(us, us.objects.tracts).features)
+  		.enter()
+  		.append('path')
+  		.attr('class', 'states')
+      .attr('fill', function(d) { 
+          return color( 1- eval("d.properties." + program_to_show));
+          })
+  		.attr('d', path)
+  		.on('mouseover', function(d){
+        showStats(d.id,
+                d.properties.eitc_elig,
+                d.properties.eitc_nr,
+                (parseFloat(d.properties.eitc_rat)*100).toFixed(2),
+                d.properties.snap_elig,
+                d.properties.snap_nr,
+                (parseFloat(d.properties.snap_rat)*100).toFixed(2),
+                d.properties.medchip_elig,
+                d.properties.medchip_nr,
+                (parseFloat(d.properties.medchip_rat)*100).toFixed(2) ) 
+  			return;
+  		});
+  });
+};
+</script>
+</body>
+</html>
