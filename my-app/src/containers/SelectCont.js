@@ -1,30 +1,58 @@
 import React from 'react';
 import SelectButton from '../components/SelectButton.js';
+import myData from '../sc_3_17_18.json';
+import Chart from '../Chart.js';
 
 
 class SelectCont extends React.Component{
-   
+	constructor(props) {
+	    super(props);
+	    this.state = {
+			showViz: true,
+			options: [],
+			selected: []
+		};
+	    // This binding is necessary to make `this` work in the callback
+	    this.toggleOption = this.toggleOption.bind(this);
+	}
 
+	componentDidMount() {	
+	}
 
-	componentDidMount() {
-			
+	toggleOption(e) {		
+		var currentSelected = this.state.selected.slice();
+		var index = currentSelected.indexOf(e);
+		if ( index < 0 ) {
+			currentSelected.push( e )
+		} else {
+			currentSelected.splice(index, 1)
+		}
+		this.setState({
+	      selected: currentSelected
+	    });
 	}
 
 	renderButton(label,index) {
-	    return <SelectButton index={index} label={label} />;
+	    return <SelectButton index={index} label={label} onClick={() => this.toggleOption(label) }
+	    />;
 	}
 
-
     render() {
-		const opts = this.props.options
-		const listItems = opts.map((city,index) =>
+		const set1 = new Set( myData.map(x => x['city']) );	
+		const listItems = [...set1].map((city,index) =>
 		    <div key={index}>
 		    	{this.renderButton(city)}
 		    </div>
 		  );
 
       	return (
+      		<div>
       		<ul>{listItems}</ul>
+      		<Chart	data={myData}
+      				selected={this.state.selected}
+      				activation={this.state.showViz}
+      				size={[500,500]} />
+      		</div>
     )}
 }
 
