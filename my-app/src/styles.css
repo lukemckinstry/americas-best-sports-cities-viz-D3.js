@@ -41,9 +41,10 @@ div.tooltip {
     pointer-events: none;
 }
 
+
 .selectButton {
   background: #fff;
-  border: 1px solid #999;
+  border: 2px solid #4CAF50;;
   float: left;
   font-size: 24px;
   font-weight: bold;
@@ -53,7 +54,7 @@ div.tooltip {
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+  width: 184px;
 }
 
 .square:focus {

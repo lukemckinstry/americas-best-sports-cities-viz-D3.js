@@ -1,6 +1,6 @@
 import React from 'react';
 import SelectButton from '../components/SelectButton.js';
-import myData from '../sc_3_17_18.json';
+import myData from '../sc_3_19_18.json';
 import Chart from '../Chart.js';
 
 
