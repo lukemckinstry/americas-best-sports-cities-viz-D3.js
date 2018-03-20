@@ -18,7 +18,7 @@ class Chart extends React.Component{
     	}
     }
 
-    componentWillUpdate(nextProps) { 
+    componentDidUpdate(nextProps) { 
     	console.log( "UPDATE TIME")
     	var dataset = this.props.data
         var selected = this.props.selected 

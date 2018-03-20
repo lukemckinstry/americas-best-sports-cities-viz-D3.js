@@ -10,10 +10,12 @@ class SelectCont extends React.Component{
 	    this.state = {
 			showViz: true,
 			options: [],
-			selected: []
+			selected: [],
+			selectedLines:[]
 		};
 	    // This binding is necessary to make `this` work in the callback
 	    this.toggleOption = this.toggleOption.bind(this);
+	    this.toggleLine = this.toggleLine.bind(this);
 	}
 
 	componentDidMount() {	
@@ -32,16 +34,35 @@ class SelectCont extends React.Component{
 	    });
 	}
 
-	renderButton(label,index) {
-	    return <SelectButton index={index} label={label} onClick={() => this.toggleOption(label) }
-	    />;
+	toggleLine(e) {		
+		console.log( e )
+		var currentSelected = this.state.selected.slice();
+		var index = currentSelected.indexOf(e);
+		if ( index < 0 ) {
+			currentSelected.push( e )
+		} else {
+			currentSelected.splice(index, 1)
+		}
+		this.setState({
+	      selected: currentSelected
+	    });
 	}
+
+	renderButton(label,index) {
+	    return <SelectButton index={index} label={label} onClick={() => this.toggleOption(label) } />;
+	}
+
+	renderLineButton(label,index) {
+	    return <SelectButton index={index} label={label} onClick={() => this.toggleLine(label) } />;
+	}
+	
 
     render() {
 		const set1 = new Set( myData.map(x => x['city']) );	
 		const listItems = [...set1].map((city,index) =>
 		    <div key={index}>
 		    	{this.renderButton(city)}
+		    	{this.renderLineButton(city)}
 		    </div>
 		  );
 
