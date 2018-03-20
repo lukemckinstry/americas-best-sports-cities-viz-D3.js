@@ -88,7 +88,6 @@ class Chart extends React.Component{
 
 		// Adds the svg canvas
 		var svg = d3.select(noode)
-		    .append("svg")
 		        .attr("width", width + margin.left + margin.right)
 		        .attr("height", height + margin.top + margin.bottom)
 		    .append("g")
@@ -242,7 +241,7 @@ class Chart extends React.Component{
 
     render() {
       return (
-	    <div className= "svg-container">
+	    <div className= "svg-container" id="viz">
             	<svg ref={node => this.noode = node}
 	        	width={1200} height={600}>
 	        	</svg>
