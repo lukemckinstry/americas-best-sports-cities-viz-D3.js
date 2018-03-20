@@ -100,13 +100,15 @@ class Chart extends React.Component{
 		//     .attr("class", "tooltip")
 		//     .style("opacity", 0);
 
+		var opacityToggle = 1;
+
 		dataNestFilter.forEach(function(d, i) {
 	        svg.append("path")
 	            .attr("class", "line")
 	            .style("stroke", "black")
 	            .attr("id", 'tag'+d.key.replace(/\s+/g, '')) // assign ID
 	            .attr("d", PCTline(d.values))
-	            .style('opacity', 0);
+	            .style('opacity', opacityToggle);
 
 	        
 	        var legendSpace = height/dataNestFilter.length; // spacing for legend
@@ -117,7 +119,7 @@ class Chart extends React.Component{
 	        // Add the Legend
 	        svg.append("text")
 	            .attr("x", 0 - margin.left/2)
-	            .attr("y", (legendSpace/2)+i*legendSpace)
+	            .attr("y", y(d.values[0]['pct']))
 	            .attr("class", "legend")
 	            .style("fill", "black")
 	            .on("click", function(){
