@@ -22,6 +22,7 @@ class SelectCont extends React.Component{
 	}
 
 	toggleOption(e) {		
+		console.log( "toggle" )
 		var currentSelected = this.state.selected.slice();
 		var index = currentSelected.indexOf(e);
 		if ( index < 0 ) {
@@ -37,6 +38,7 @@ class SelectCont extends React.Component{
 	}
 
 	toggleLine(e) {
+		console.log( "toggle" )
 		var currentSelectedLines = this.state.selectedLines.slice();
 		var currentSelectedCircles = this.state.selected.slice();
 		var indexLine = currentSelectedLines.indexOf(e);

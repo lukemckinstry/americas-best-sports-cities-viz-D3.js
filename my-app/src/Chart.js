@@ -20,7 +20,6 @@ class Chart extends React.Component{
     }
 
     componentDidUpdate(nextProps) { 
-    	//console.log( "UPDATE TIME")
     	var dataset = this.props.data
         var selected = this.props.selected
         var selectedLines = this.props.selectedLines
@@ -30,8 +29,9 @@ class Chart extends React.Component{
     draw( myData, selected, selectedLines ) {
     	console.log( "DRAW" );
 
-    	//console.log("SELECTED LINES");
-    	//console.log( selectedLines )
+    	if ( document.contains(document.getElementById("viz"))) {
+            document.getElementById("viz").remove();
+                    }
     	
     	var margin = {top: 10, right: 80, bottom: 45, left: 80},
 	    width = 1200 - margin.left - margin.right,
@@ -80,9 +80,11 @@ class Chart extends React.Component{
 	    const dataNestFilterCircles = dataNest.filter(word => selected.indexOf( word.key ) >= 0 );
 	    const dataNestFilterLines = dataNest.filter(word => selectedLines.indexOf( word.key ) >= 0 );
 
+	    // console.log( dataNestFilterCircles.length )
+	    // console.log( dataNestFilterLines.length )
 
 		var xAxis = d3.axisBottom()
-			.scale(x).ticks(10);      
+			.scale(x).ticks(55);      
 		var yAxis = d3.axisLeft()
 			.scale(y).ticks(10);
 
@@ -95,6 +97,7 @@ class Chart extends React.Component{
 
 		// Adds the svg canvas
 		var svg = d3.select(noode)
+				.append('svg').attr('id','viz')
 		        .attr("width", width + margin.left + margin.right)
 		        .attr("height", height + margin.top + margin.bottom)
 		    .append("g")
@@ -120,13 +123,13 @@ class Chart extends React.Component{
 	            .style('opacity', opacityToggle);
 
 	        
-	        var legendSpace = height/dataNestFilterCircles.length; // spacing for legend
-	        
+	        //var legendSpace = height/dataNestFilterCircles.length; // spacing for legend
 	        //remove old legend info
-	        svg.selectAll("text.legend").remove()
+	        //svg.selectAll("text.legend").remove()
 
-	        console.log( d.key )
-	        console.log( y(d.values[0]['pct']) )
+	        // console.log(d)
+	        // console.log( d.values[0]['pct'] )
+	        // console.log( d.key )
 
 	        // Add the Legend
 	        svg.append("text")
@@ -134,35 +137,20 @@ class Chart extends React.Component{
 	            .attr("y", y(d.values[0]['pct']))
 	            .attr("class", "legend")
 	            .style("fill", "black")
-	            .on("click", function(){
-	                // Determine if current line is visible
-	                var active   = d.active ? false : true,
-	                newOpacity = active ? 0 : 1;
-	                // Hide or show the elements based on the ID
-	                d3.select("#tag"+d.key.replace(/\s+/g, ''))
-	                    .transition().duration(100)
-	                    .style("opacity", newOpacity);
-	                // Update whether or not the elements are active
-	                d.active = active;
-	                })
+	            // .on("click", function(){
+	            //     // Determine if current line is visible
+	            //     var active   = d.active ? false : true,
+	            //     newOpacity = active ? 0 : 1;
+	            //     // Hide or show the elements based on the ID
+	            //     d3.select("#tag"+d.key.replace(/\s+/g, ''))
+	            //         .transition().duration(100)
+	            //         .style("opacity", newOpacity);
+	            //     // Update whether or not the elements are active
+	            //     d.active = active;
+	            //     })
 	            .text(d.key);
 	        });
 
-		//Add the grid
-	    // svg.append("g")
-	    //     .attr("class", "grid")
-	    //     .attr("transform", "translate(0," + height + ")")
-	    //     .call(make_x_axis()
-	    //         .tickSize(-height, 0, 0)
-	    //         .tickFormat("")
-	    //     )
-
-	    // svg.append("g")
-	    //     .attr("class", "grid")
-	    //     .call(make_y_axis()
-	    //         .tickSize(-width, 0, 0)
-	    //         .tickFormat("")
-	    //     )
 
 	    var radius = 2
 
@@ -197,24 +185,23 @@ class Chart extends React.Component{
               }
 
             })
-            .on("mouseover", function(d) {
-	            console.log( d );
-	            // div.transition()
-	            //     .ease("elastic")
-	            //     .duration(200)
-	            //     .style("opacity", .9);
-	            // div .html((d.city) + "<br/>"  + d.year + "<br/>" + "Championships: " + d.champ
-	            //     + "<br/>" + "Top 4 Finishes: " + d.ff + "<br/>" + "Teams: " + d.tooltip )
-	            //     .style("left", (d3.event.pageX) + "px")
-	            //     .style("top", (d3.event.pageY - 28) + "px");
-	             })
-            .on("mouseout", function(d) {
-                console.log( d );
-                // div.transition()
-                //     .ease("elastic")
-                //     .duration(500)
-                //     .style("opacity", 0);
-            });
+            // .on("mouseover", function(d) {
+	           //  // div.transition()
+	           //  //     .ease("elastic")
+	           //  //     .duration(200)
+	           //  //     .style("opacity", .9);
+	           //  // div .html((d.city) + "<br/>"  + d.year + "<br/>" + "Championships: " + d.champ
+	           //  //     + "<br/>" + "Top 4 Finishes: " + d.ff + "<br/>" + "Teams: " + d.tooltip )
+	           //  //     .style("left", (d3.event.pageX) + "px")
+	           //  //     .style("top", (d3.event.pageY - 28) + "px");
+	           //   })
+            // .on("mouseout", function(d) {
+            //     console.log( d );
+            //     // div.transition()
+            //     //     .ease("elastic")
+            //     //     .duration(500)
+            //     //     .style("opacity", 0);
+            // });
 
         // Add the X Axis
 	    svg.append("g")
@@ -254,7 +241,7 @@ class Chart extends React.Component{
 
     render() {
       return (
-	    <div className= "svg-container" id="viz">
+	    <div className= "svg-container" >
             	<svg ref={node => this.noode = node}
 	        	width={1200} height={600}>
 	        	</svg>

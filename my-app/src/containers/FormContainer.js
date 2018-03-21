@@ -16,8 +16,6 @@ class FormContainer extends React.Component{
 
    render() {
       return <div>
-                <h1>Hello World!</h1>
-                <p>This is my first React Component.</p>
  	        	<SelectCont />
              </div>
       }
