@@ -1,9 +1,12 @@
 # americas-best-sports-cities-viz-D3.js
-Data viz showing professional sports success in America's most passionate sports cities 
+Comparison of wins and championships in professional sports cities 
 
-http://hello-luke-987.appspot.com/sportcities  --> NOTE this version is D3-only, no React yet
+https://nameless-meadow-33807.herokuapp.com/ --> React version, no interactive elements (aka transitions and mouseover tooltips)
 
-Summary -
+http://hello-luke-987.appspot.com/sportcities  --> D3-only, no React
+
+
+Project Summary -
 
 Here we map the success of sports teams in several of the largest markets for professional sports in the United States from 1960 - 2015. We show results from the 4 major men's professional sports leagues: Major League Baseball, National Basketball Association, National Hockey League and the National Football League. For each year we show three criteria: Win percentage of the teams in a city, teams advancing to the conference or league finals in a season (top 4 finish), and championships won in a season. I created the data set using web scraping with Python.
 
