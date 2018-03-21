@@ -21,7 +21,7 @@ class SelectButton extends React.Component{
 
    render() {
       return (
-		      <button className="selectButton" onClick={() => this.props.onClick()}>
+		      <button className={this.props.className} onClick={() => this.props.onClick()}>
 		        {this.props.label}
 		      </button>
       )}

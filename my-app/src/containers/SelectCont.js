@@ -32,28 +32,39 @@ class SelectCont extends React.Component{
 		this.setState({
 	      selected: currentSelected
 	    });
+	    //console.log( this.state.selected )
+	    //console.log( this.state.selectedLines )
 	}
 
-	toggleLine(e) {		
-		console.log( e )
-		var currentSelected = this.state.selected.slice();
-		var index = currentSelected.indexOf(e);
-		if ( index < 0 ) {
-			currentSelected.push( e )
+	toggleLine(e) {
+		var currentSelectedLines = this.state.selectedLines.slice();
+		var currentSelectedCircles = this.state.selected.slice();
+		var indexLine = currentSelectedLines.indexOf(e);
+		var indexCircle = currentSelectedCircles.indexOf(e);
+		if ( indexCircle < 0 ) {
+			currentSelectedCircles.push( e )
+		} else {}
+		if ( indexLine < 0 ) {
+			currentSelectedLines.push( e )
 		} else {
-			currentSelected.splice(index, 1)
+			currentSelectedLines.splice(indexLine, 1)
 		}
 		this.setState({
-	      selected: currentSelected
+	      selectedLines: currentSelectedLines,
+	      selected: currentSelectedCircles
 	    });
+	    //console.log( this.state.selected )
+	    //console.log( this.state.selectedLines )
 	}
 
 	renderButton(label,index) {
-	    return <SelectButton index={index} label={label} onClick={() => this.toggleOption(label) } />;
+	    return <SelectButton className={'selectButton'} index={index}
+	    		 label={label} onClick={() => this.toggleOption(label) } />;
 	}
 
 	renderLineButton(label,index) {
-	    return <SelectButton index={index} label={label} onClick={() => this.toggleLine(label) } />;
+	    return <SelectButton className={'selectLineButton'} index={index}
+	    		 label={''} onClick={() => this.toggleLine(label) } />;
 	}
 	
 
@@ -71,6 +82,7 @@ class SelectCont extends React.Component{
       		<ul>{listItems}</ul>
       		<Chart	data={myData}
       				selected={this.state.selected}
+      				selectedLines={this.state.selectedLines}
       				activation={this.state.showViz}
       				size={[500,500]} />
       		</div>

@@ -11,7 +11,8 @@ class Chart extends React.Component{
     	if ( this.props.activation === true )  {
         	var dataset = this.props.data
         	var selected = this.props.selected 
-        	this.draw( dataset, selected );
+        	var selectedLines = this.props.selectedLines
+        	this.draw( dataset, selected, selectedLines );
       	}
       	if ( this.props.activation === false )  {
         	//this.remove();
@@ -19,14 +20,18 @@ class Chart extends React.Component{
     }
 
     componentDidUpdate(nextProps) { 
-    	console.log( "UPDATE TIME")
+    	//console.log( "UPDATE TIME")
     	var dataset = this.props.data
-        var selected = this.props.selected 
-        this.draw( dataset, selected );
+        var selected = this.props.selected
+        var selectedLines = this.props.selectedLines
+        this.draw( dataset, selected, selectedLines );
     }
 
-    draw( myData, selected ) {
+    draw( myData, selected, selectedLines ) {
     	console.log( "DRAW" );
+
+    	//console.log("SELECTED LINES");
+    	//console.log( selectedLines )
     	
     	var margin = {top: 10, right: 80, bottom: 45, left: 80},
 	    width = 1200 - margin.left - margin.right,
@@ -72,7 +77,9 @@ class Chart extends React.Component{
 	            return d.city;})
 	        .entries(myData);
 	    
-	    const dataNestFilter = dataNest.filter(word => selected.indexOf( word.key ) >= 0 );
+	    const dataNestFilterCircles = dataNest.filter(word => selected.indexOf( word.key ) >= 0 );
+	    const dataNestFilterLines = dataNest.filter(word => selectedLines.indexOf( word.key ) >= 0 );
+
 
 		var xAxis = d3.axisBottom()
 			.scale(x).ticks(10);      
@@ -99,9 +106,12 @@ class Chart extends React.Component{
 		//     .attr("class", "tooltip")
 		//     .style("opacity", 0);
 
+		svg.selectAll("path").remove()
+		svg.selectAll("g").remove()
+
 		var opacityToggle = 1;
 
-		dataNestFilter.forEach(function(d, i) {
+		dataNestFilterLines.forEach(function(d, i) {
 	        svg.append("path")
 	            .attr("class", "line")
 	            .style("stroke", "black")
@@ -110,10 +120,13 @@ class Chart extends React.Component{
 	            .style('opacity', opacityToggle);
 
 	        
-	        var legendSpace = height/dataNestFilter.length; // spacing for legend
+	        var legendSpace = height/dataNestFilterCircles.length; // spacing for legend
 	        
 	        //remove old legend info
 	        svg.selectAll("text.legend").remove()
+
+	        console.log( d.key )
+	        console.log( y(d.values[0]['pct']) )
 
 	        // Add the Legend
 	        svg.append("text")
@@ -154,7 +167,7 @@ class Chart extends React.Component{
 	    var radius = 2
 
         svg.selectAll("g.circle")
-                .data(dataNestFilter)
+                .data(dataNestFilterCircles)
                .enter()
                 .append("g")
                 .attr("class", "circle")
