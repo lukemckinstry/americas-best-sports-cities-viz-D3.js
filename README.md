@@ -3,7 +3,7 @@ Comparison of wins and championships in professional sports cities
 
 https://nameless-meadow-33807.herokuapp.com/ --> React version, no interactive elements (aka transitions and mouseover tooltips)
 
-http://hello-luke-987.appspot.com/sportcities  --> D3-only, no React
+https://lukemckinstry.github.io/americas-best-sports-cities-viz-D3.js/  --> D3-only, no React
 
 
 Project Summary -
